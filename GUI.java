@@ -114,12 +114,9 @@ public final class GUI extends JFrame implements ActionListener {
     }
 
 
-    public void updatePlayers () {
+    public void updatePlayer (int index) {
 
-        for (int i = 0; i < mainAgent.players.size (); i++) {
-
-            playerListModel.setElementAt (mainAgent.players.get (i), i);
-        }
+        playerListModel.setElementAt (mainAgent.players.get (index), index);
     }
 
 

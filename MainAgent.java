@@ -107,6 +107,8 @@ public class MainAgent extends Agent {
                 send (msg);
             }
 
+            resetPlayers ();
+            gui.dfModel.setRowCount (0);
             System.out.println ("||||| NEW GAME FOR " + players.size () + " PLAYERS |||||");
             gamesPlayed = 0;
 
@@ -114,7 +116,7 @@ public class MainAgent extends Agent {
                 for (int j = i + 1; j < players.size (); j++) {
                     
                     System.out.println ("New Round: " + i + " vs " + j);
-                    playGame (players.get (i), players.get (j));
+                    playGame (i, j);
                     gamesPlayed ++;
                     gui.updateRounds ();
                 }
@@ -135,8 +137,9 @@ public class MainAgent extends Agent {
         }
         
         
-        private void playGame (PlayerInformation p1, PlayerInformation p2) {
+        private void playGame (int indexP1, int indexP2) {
         
+            PlayerInformation p1 = players.get (indexP1), p2 = players.get (indexP2);
             ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
             String pos1, pos2;
             
@@ -163,7 +166,7 @@ public class MainAgent extends Agent {
                     }
                 }
 
-                System.out.println ("\n\n---------- Round " + i + " ----------\n");
+                System.out.println ("\n\n---------- Round " + i + " ----------");
                 
                 // Envia peticion de jugada a p1 y printea la respuesta
     
@@ -255,7 +258,8 @@ public class MainAgent extends Agent {
                 gui.dfModel.addRow (new Object [] {p1.id, p2.id, totalPoints1, totalPoints2, "Draw"});
             }
 
-            gui.updatePlayers ();
+            gui.updatePlayer (indexP1);
+            gui.updatePlayer (indexP2);
         }
         
 
@@ -286,25 +290,20 @@ public class MainAgent extends Agent {
         for (PlayerInformation player : players) {
 
             player.points = 0;
+            gui.updatePlayer (player.id);
         }
     }
 
 
     public void stopExec () {
 
-        System.out.println ("Paro antes: " + stop);
         stop = true;
-        System.out.println ("Paro despues: " + stop);
-
     }
 
 
     public void continueExec () {
 
-        System.out.println ("Sigo antes: " + stop);
         stop = false;
-        System.out.println ("Sigo despues: " + stop);
-
     }
 
 
