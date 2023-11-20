@@ -50,8 +50,7 @@ public class RandomAgent extends Agent {
             e.printStackTrace ();
         }
     }
-
-
+    
 
     private enum State {
 

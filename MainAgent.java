@@ -16,6 +16,7 @@ public class MainAgent extends Agent {
     ArrayList <PlayerInformation> players = new ArrayList <> ();
     private GUI gui;
     private AID [] playerAgentIds;
+    private boolean stop = false;
     public GameParametersStruct params = new GameParametersStruct ();
     int gamesPlayed;
 
@@ -33,18 +34,18 @@ public class MainAgent extends Agent {
 
     public int updatePlayers() {
 
-        gui.logLine("Updating player list");
+        gui.logLine ("Updating player list");
         
         int lastId = 0;
-        DFAgentDescription template = new DFAgentDescription();
-        ServiceDescription sd = new ServiceDescription();
+        DFAgentDescription template = new DFAgentDescription ();
+        ServiceDescription sd = new ServiceDescription ();
         
-        sd.setType("Player");
-        template.addServices(sd);
+        sd.setType ("Player");
+        template.addServices (sd);
         
         try {
 
-            DFAgentDescription[] result = DFService.search (this, template);
+            DFAgentDescription [] result = DFService.search (this, template);
             
             if (result.length > 0) {
             
@@ -93,10 +94,10 @@ public class MainAgent extends Agent {
 
     
     private class GameManager extends SimpleBehaviour {
+        
+        int bestP = 0;
 
-        @Override
         public void action () {
-
 
             for (PlayerInformation player : players) {
 
@@ -116,20 +117,31 @@ public class MainAgent extends Agent {
                     playGame (players.get (i), players.get (j));
                     gamesPlayed ++;
                     gui.updateRounds ();
-
                 }
-
             }
+
+            for (int i = 1; i < players.size (); i++) {
+
+                if (players.get (i).points > players.get (bestP).points) {
+
+                    bestP = i;
+                }
+            }
+
+            System.out.println ("\n\n\n**** WINNER ****");
+            System.out.println ("*          " + players.get (bestP).aid.getName ().split ("@") [0] + "          *");
+            System.out.println ("****************");
+
         }
-
-
+        
+        
         private void playGame (PlayerInformation p1, PlayerInformation p2) {
-
+        
             ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
             String pos1, pos2;
-
+            
             int points1, points2, totalPoints1 = 0, totalPoints2 = 0;
-
+            
             // Envia nueva partida a los jugadores
             
             msg.addReceiver (p1.aid);
@@ -138,9 +150,10 @@ public class MainAgent extends Agent {
             send (msg);
 
             for (int i = 1; i <= params.R; i++) {
-
+                
+                while (stop);
                 System.out.println ("\n\n---------- Round " + i + " ----------\n");
-
+                
                 // Envia peticion de jugada a p1 y printea la respuesta
     
                 msg = new ACLMessage (ACLMessage.REQUEST);
@@ -208,7 +221,7 @@ public class MainAgent extends Agent {
 
             }
 
-            System.out.println ("\n\n********** RESULTS **********\n");
+            System.out.println ("\n\n****** RESULTS ******\n");
 
             msg = new ACLMessage (ACLMessage.INFORM);
             msg.addReceiver (p1.aid);            
@@ -266,6 +279,24 @@ public class MainAgent extends Agent {
     }
 
 
+    public void stopExec () {
+
+        System.out.println ("Paro antes: " + stop);
+        stop = true;
+        System.out.println ("Paro despues: " + stop);
+
+    }
+
+
+    public void continueExec () {
+
+        System.out.println ("Sigo antes: " + stop);
+        stop = false;
+        System.out.println ("Sigo despues: " + stop);
+
+    }
+
+
     public void removePlayer (String agent) {
 
         agent = agent.split ("@") [0];
@@ -274,7 +305,7 @@ public class MainAgent extends Agent {
 
             if (agent.equals (players.get (i).aid.getName ().split ("@") [0])) {
 
-                ACLMessage msgRm = new ACLMessage (ACLMessage.REFUSE);
+                ACLMessage msgRm = new ACLMessage (ACLMessage.INFORM);
                 msgRm.addReceiver (players.get (i).aid);
                 msgRm.setContent ("Remove");
                 send (msgRm);
@@ -322,7 +353,7 @@ public class MainAgent extends Agent {
         public GameParametersStruct () {
 
             N = 0;
-            R = 50;
+            R = 5;
         }
     }
 }
