@@ -6,7 +6,6 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import jade.util.leap.Collection;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -44,34 +43,34 @@ public class MainAgent extends Agent {
         template.addServices(sd);
         
         try {
+
             DFAgentDescription[] result = DFService.search (this, template);
+            
             if (result.length > 0) {
-                gui.logLine("Found " + result.length + " players");
+            
+                gui.logLine ("Found " + result.length + " players");
             }
 
             playerAgentIds = new AID[result.length];
+            
             for (int i = 0; i < result.length; ++i) {
-                playerAgentIds[i] = result[i].getName();
+            
+                playerAgentIds [i] = result [i].getName ();
             }
 
         } catch (FIPAException fe) {
-            gui.logLine(fe.getMessage());
+            
+            gui.logLine (fe.getMessage ());
         }
 
         // Provisional
-        String[] playerNames = new String[playerAgentIds.length];
+        String [] playerNames = new String [playerAgentIds.length];
         for (int i = 0; i < playerAgentIds.length; i++) {
-            playerNames[i] = playerAgentIds[i].getName();
+            
+            playerNames [i] = playerAgentIds [i].getName ();
         }
         
-        for (int i = 0; i < players.size (); i++) {
-         
-            System.out.println ("paso " + i + " veces");
-            gui.removePlayer (0);
-        }
-        
-        gui.setPlayersUI(playerNames);
-        players.clear ();
+        gui.setPlayersUI (playerNames);
                 
         for (AID aid : playerAgentIds) {
             
@@ -85,8 +84,9 @@ public class MainAgent extends Agent {
     }
 
 
-    public int newGame() {
-        addBehaviour(new GameManager());
+    public int newGame () {
+
+        addBehaviour (new GameManager ());
         return 0;
     }
 
@@ -274,15 +274,13 @@ public class MainAgent extends Agent {
 
             if (agent.equals (players.get (i).aid.getName ().split ("@") [0])) {
 
-                ACLMessage msgRm = new ACLMessage (ACLMessage.INFORM);
+                ACLMessage msgRm = new ACLMessage (ACLMessage.REFUSE);
                 msgRm.addReceiver (players.get (i).aid);
                 msgRm.setContent ("Remove");
                 send (msgRm);
 
-                System.out.println ("Paso");
-
+                players.remove (i);
                 gui.removePlayer (i);
-                updatePlayers ();
                 break;
             }
         }

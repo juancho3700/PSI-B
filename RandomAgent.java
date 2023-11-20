@@ -49,9 +49,8 @@ public class RandomAgent extends Agent {
 
             e.printStackTrace ();
         }
-
-        System.exit (0);
     }
+
 
 
     private enum State {
@@ -63,6 +62,7 @@ public class RandomAgent extends Agent {
     }
 
 
+    
     private class Play extends CyclicBehaviour {
         
         @Override
@@ -93,6 +93,7 @@ public class RandomAgent extends Agent {
                         } else if (msg.getContent ().equals ("Remove")) {
 
                             takeDown ();
+                            break;
                         }
                     
                         System.out.println (getAID ().getName ().split ("@") [0] + ": " + state.name () + " - Unexpected message (" + msg.getContent () + ")");
@@ -133,6 +134,7 @@ public class RandomAgent extends Agent {
                             } else if (msg.getContent ().equals ("Remove")) {
 
                                 takeDown ();
+                                break;
                             }
                         }
 
@@ -206,6 +208,7 @@ public class RandomAgent extends Agent {
             send (msg);
         }
     }
+
 
 
     public class PlayerInformation {
