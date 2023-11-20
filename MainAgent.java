@@ -15,8 +15,7 @@ public class MainAgent extends Agent {
     
     ArrayList <PlayerInformation> players = new ArrayList <> ();
     private GUI gui;
-    private AID [] playerAgentIds;
-    private boolean stop = false;
+    private boolean stop = false, gameOn = false;
     public GameParametersStruct params = new GameParametersStruct ();
     int gamesPlayed;
 
@@ -36,7 +35,6 @@ public class MainAgent extends Agent {
 
         gui.logLine ("Updating player list");
         
-        int lastId = 0;
         DFAgentDescription template = new DFAgentDescription ();
         ServiceDescription sd = new ServiceDescription ();
         
@@ -52,30 +50,19 @@ public class MainAgent extends Agent {
                 gui.logLine ("Found " + result.length + " players");
             }
 
-            playerAgentIds = new AID[result.length];
+            String [] playerNames = new String [result.length];
             
             for (int i = 0; i < result.length; ++i) {
             
-                playerAgentIds [i] = result [i].getName ();
+                players.add (new PlayerInformation (result [i].getName (), i));
+                playerNames [i] = result [i].getName ().getName ();
             }
+
+            gui.setPlayersUI (playerNames);
 
         } catch (FIPAException fe) {
             
             gui.logLine (fe.getMessage ());
-        }
-
-        // Provisional
-        String [] playerNames = new String [playerAgentIds.length];
-        for (int i = 0; i < playerAgentIds.length; i++) {
-            
-            playerNames [i] = playerAgentIds [i].getName ();
-        }
-        
-        gui.setPlayersUI (playerNames);
-                
-        for (AID aid : playerAgentIds) {
-            
-            players.add (new PlayerInformation (aid, lastId++));
         }
         
         changeNPlayers ();
@@ -111,6 +98,7 @@ public class MainAgent extends Agent {
             gui.dfModel.setRowCount (0);
             System.out.println ("||||| NEW GAME FOR " + players.size () + " PLAYERS |||||");
             gamesPlayed = 0;
+            gameOn = true;
 
             for (int i = 0; i < players.size () - 1; i++) {
                 for (int j = i + 1; j < players.size (); j++) {
@@ -121,6 +109,8 @@ public class MainAgent extends Agent {
                     gui.updateRounds ();
                 }
             }
+
+            gameOn = false;
 
             for (int i = 1; i < players.size (); i++) {
 
@@ -308,6 +298,12 @@ public class MainAgent extends Agent {
 
 
     public void removePlayer (String agent) {
+
+        if (gameOn) {
+
+            System.out.println ("Wait to the game to end to remove players");
+            return;
+        }
 
         agent = agent.split ("@") [0];
 

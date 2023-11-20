@@ -44,6 +44,7 @@ public class RandomAgent extends Agent {
         try {
 
             DFService.deregister (this);
+            System.out.println ("Me mori");
 
         } catch (Exception e) {
 
