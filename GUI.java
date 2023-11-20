@@ -55,7 +55,7 @@ public final class GUI extends JFrame implements ActionListener {
             rightPanelLoggingTextArea.append ('[' + LocalDateTime.now ().format (DateTimeFormatter.ofPattern ("HH:mm:ss")) + "] - " + s);
             rightPanelLoggingTextArea.setCaretPosition (rightPanelLoggingTextArea.getDocument ().getLength ());
         };
-        
+
         SwingUtilities.invokeLater (appendLine);
     }
 
@@ -134,8 +134,7 @@ public final class GUI extends JFrame implements ActionListener {
 
     public void removePlayer (int index) {
 
-        this.logLine ("Elimino player " + index);
-
+        this.logLine ("Remove player " + index);
         playerListModel.removeElementAt (index);
     }
                                         

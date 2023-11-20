@@ -151,7 +151,18 @@ public class MainAgent extends Agent {
 
             for (int i = 1; i <= params.R; i++) {
                 
-                while (stop);
+                while (stop) {
+
+                    try {
+
+                        Thread.sleep (100);
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace ();
+                    }
+                }
+
                 System.out.println ("\n\n---------- Round " + i + " ----------\n");
                 
                 // Envia peticion de jugada a p1 y printea la respuesta
